@@ -8,11 +8,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 @Getter
 @Setter
 @ToString
-@Document(collection = "crawling")
-public class News {
+@Document(collection = "result")
+public class Result {
   @Id
   @Nullable
   String _id;
@@ -58,4 +59,6 @@ public class News {
   String regDate;
 
   int readCheck;
+
+  String keywords;
 }
