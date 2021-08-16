@@ -1,10 +1,8 @@
 package com.javas.analysis;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.javas.analysis.dto.News;
+import com.javas.analysis.dto.Result;
 import com.javas.analysis.repository.NewsRepository;
 import com.javas.analysis.repository.ResultRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +35,13 @@ public class AnalyzeServiceTest {
         List<News> newsList = newsRepository.findAllByReadCheck(0);
 
         News news = newsList.get(0);
+        String keywords = "";
 
-        log.info(news.toString());
-        log.info(extractKeywords(news));
+        keywords = extractKeywords(news);
+        news.setReadCheck(1);
+        Result result = appendNewsAndKeywords(news, keywords);
+        resultRepository.save(result);
+        newsRepository.save(news);
     }
 
     private String extractKeywords(News news) throws Exception {
@@ -69,6 +71,20 @@ public class AnalyzeServiceTest {
         String entityString = EntityUtils.toString(response.getEntity());
 
         return getKeywords(entityString);
+    }
+
+    private Result appendNewsAndKeywords(News news, String keywords) {
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(news);
+        JsonObject jsonObject = (JsonObject)JsonParser.parseString(jsonStr);
+        jsonObject.addProperty("keywords", keywords);
+
+        String resultStr = jsonObject.toString();
+
+        log.info("resultStr : {}",resultStr);
+        Result result = gson.fromJson(resultStr, Result.class);
+
+        return result;
     }
 
     private String getKeywords(String entityString) {

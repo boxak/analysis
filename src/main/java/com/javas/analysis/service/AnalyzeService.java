@@ -72,7 +72,7 @@ public class AnalyzeService {
     jsonObj.addProperty("text", text);
     jsonObj.addProperty("analyzer", "nori_token_analyzer");
 
-    String query = jsonObj.getAsString();
+    String query = jsonObj.toString();
     log.info("jsonStr : {}",query);
 
     String endPoint = "/korean_analyzer/_analyze";
@@ -103,7 +103,7 @@ public class AnalyzeService {
   private RestClient restClientBuild() throws Exception {
     RestClientBuilder builder = null;
     try {
-      String server = "localhost";
+      String server = "127.0.0.1";
       HttpHost host = new HttpHost(server,9200,"http");
       builder = RestClient.builder(host);
       builder.setRequestConfigCallback(new RequestConfigCallback() {

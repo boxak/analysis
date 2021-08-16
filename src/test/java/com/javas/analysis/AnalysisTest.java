@@ -55,7 +55,7 @@ public class AnalysisTest {
   @Test
   void T2() {
     News news = new News();
-    news = newsRepository.findFirstByUri("https://news.naver.com/main/read.nhn?mode=LS2D&mid=shm&sid1=102&sid2=250&oid=025&aid=0003083100");
+    news = newsRepository.findFirstByUri("https://news.naver.com/main/read.naver?mode=LS2D&mid=shm&sid1=101&sid2=771&oid=277&aid=0004954195");
     log.info(news.toString());
 
     ArrayList<String> beforeAnalysis = new ArrayList<>();
@@ -71,10 +71,11 @@ public class AnalysisTest {
     for (String sentences : beforeAnalysis) {
       KomoranResult result = komoran.analyze(sentences);
       List<Pair<String, String>> list = result.getList();
+      log.info(list.size()+"");
       for (Pair<String, String> pair : list) {
-        if ("NNP".equals(pair.getSecond())) {
-          log.info(pair.getFirst() + " " + pair.getSecond());
-        }
+
+        log.info(pair.getFirst() + " " + pair.getSecond());
+
       }
     }
 
