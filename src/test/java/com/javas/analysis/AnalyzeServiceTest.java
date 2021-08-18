@@ -1,11 +1,18 @@
 package com.javas.analysis;
 
 import com.google.gson.*;
+import com.javas.analysis.dto.Dict;
 import com.javas.analysis.dto.News;
 import com.javas.analysis.dto.Result;
+import com.javas.analysis.repository.DictRepository;
 import com.javas.analysis.repository.NewsRepository;
 import com.javas.analysis.repository.ResultRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -30,6 +37,9 @@ public class AnalyzeServiceTest {
     @Autowired
     ResultRepository resultRepository;
 
+    @Autowired
+    DictRepository dictRepository;
+
     @Test
     void T1() throws Exception {
         List<News> newsList = newsRepository.findAllByReadCheck(0);
@@ -42,6 +52,36 @@ public class AnalyzeServiceTest {
         Result result = appendNewsAndKeywords(news, keywords);
         resultRepository.save(result);
         newsRepository.save(news);
+
+        String[] splitedKeywords = keywords.split(",");
+        Map<String, Integer> wordMap = new HashMap<>();
+        List<Dict> dictList = new ArrayList<>();
+
+        for (String keyword : splitedKeywords) {
+            keyword = keyword.trim();
+            if (wordMap.containsKey(keyword)) {
+                int count = wordMap.get(keyword);
+                wordMap.put(keyword, count+1);
+            } else {
+                wordMap.put(keyword,1);
+            }
+        }
+
+        for (String keyword : wordMap.keySet()) {
+            keyword = keyword.trim();
+            int countFromMap = wordMap.get(keyword);
+            Dict dict = dictRepository.findByWord(keyword);
+            if (ObjectUtils.isNotEmpty(dict)) {
+                int countFromMongo = dict.getCount();
+                dict.setCount(countFromMongo + countFromMap);
+            } else {
+                dict = new Dict();
+                dict.setWord(keyword);
+                dict.setCount(countFromMap);
+            }
+            dictList.add(dict);
+        }
+        dictRepository.saveAll(dictList);
     }
 
     private String extractKeywords(News news) throws Exception {
@@ -94,7 +134,7 @@ public class AnalyzeServiceTest {
 
         for (JsonElement element : jsonArray) {
             JsonObject tempObj = (JsonObject) element;
-            sb.append(String.valueOf(tempObj.get("token"))+",");
+            sb.append(String.valueOf(tempObj.get("token")).replaceAll("\"","")+",");
         }
 
         String str = sb.toString();
