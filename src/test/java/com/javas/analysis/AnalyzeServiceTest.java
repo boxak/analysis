@@ -46,6 +46,10 @@ public class AnalyzeServiceTest {
 
         News news = newsList.get(0);
         String keywords = "";
+        String[] splitedKeywords = null;
+        Map<String, Integer> wordMap = new HashMap<>();
+        List<Dict> dictList = new ArrayList<>();
+
 
         keywords = extractKeywords(news);
         news.setReadCheck(1);
@@ -53,17 +57,15 @@ public class AnalyzeServiceTest {
         resultRepository.save(result);
         newsRepository.save(news);
 
-        String[] splitedKeywords = keywords.split(",");
-        Map<String, Integer> wordMap = new HashMap<>();
-        List<Dict> dictList = new ArrayList<>();
+        splitedKeywords = keywords.split(",");
 
         for (String keyword : splitedKeywords) {
             keyword = keyword.trim();
             if (wordMap.containsKey(keyword)) {
                 int count = wordMap.get(keyword);
-                wordMap.put(keyword, count+1);
+                wordMap.put(keyword, count + 1);
             } else {
-                wordMap.put(keyword,1);
+                wordMap.put(keyword, 1);
             }
         }
 
