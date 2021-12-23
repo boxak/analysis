@@ -1,4 +1,4 @@
-package com.javas.analysis.repository;
+package com.javas.analysis.mongo_repository;
 
 import com.javas.analysis.config.MongoDBConfig;
 import com.javas.analysis.dto.News;

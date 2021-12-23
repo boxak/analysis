@@ -3,8 +3,9 @@ package com.javas.analysis;
 import com.google.gson.*;
 import com.javas.analysis.dto.News;
 import com.javas.analysis.dto.Result;
-import com.javas.analysis.repository.NewsRepository;
-import com.javas.analysis.repository.ResultRepository;
+import com.javas.analysis.es.ElasticApi;
+import com.javas.analysis.mongo_repository.NewsRepository;
+import com.javas.analysis.mongo_repository.ResultRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
@@ -17,7 +18,6 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-
 import java.util.List;
 
 @Slf4j
@@ -41,6 +41,7 @@ public class AnalyzeServiceTest {
         news.setReadCheck(1);
         Result result = appendNewsAndKeywords(news, keywords);
         resultRepository.save(result);
+        ElasticApi.insertAnalysisResult(result);
         newsRepository.save(news);
     }
 

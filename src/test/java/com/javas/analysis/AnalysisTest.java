@@ -1,7 +1,7 @@
 package com.javas.analysis;
 
 import com.javas.analysis.dto.News;
-import com.javas.analysis.repository.NewsRepository;
+import com.javas.analysis.mongo_repository.NewsRepository;
 import java.util.ArrayList;
 import java.util.List;
 import kr.co.shineware.nlp.komoran.constant.DEFAULT_MODEL;
