@@ -42,6 +42,7 @@ public class ElasticApi {
         result.setPubDate(ElasticUtil.convertPubDate(result.getPubDate()));
         result.setRegDate(ElasticUtil.convertRegDate(result.getRegDate()));
 
+        //커밋용 주석
         JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("title", result.getTitle());
         jsonObj.addProperty("content", result.getContent());
