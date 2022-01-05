@@ -4,23 +4,29 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.javas.analysis.config.ElasticsearchClientConfig;
 import com.javas.analysis.dto.Result;
 import com.javas.analysis.utils.ElasticUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Slf4j
+@Component
+@ComponentScan(basePackageClasses = {ElasticsearchClientConfig.class})
 public class ElasticApi {
+
+    @Autowired
+    private RestClient client;
 
     public String extractKeywords(String text) {
         JsonObject jsonObj = new JsonObject();
@@ -36,13 +42,12 @@ public class ElasticApi {
         return getKeywords(entityString);
     }
 
-    public static String insertAnalysisResult(Result result) {
+    public String insertAnalysisResult(Result result) {
         if (ObjectUtils.isEmpty(result)) return "result object is null...";
 
         result.setPubDate(ElasticUtil.convertPubDate(result.getPubDate()));
         result.setRegDate(ElasticUtil.convertRegDate(result.getRegDate()));
 
-        //커밋용 주석
         JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("title", result.getTitle());
         jsonObj.addProperty("content", result.getContent());
@@ -85,10 +90,9 @@ public class ElasticApi {
         return str;
     }
 
-    private static String callElasticApi(String method, String endPoint, String query) {
+    private String callElasticApi(String method, String endPoint, String query) {
         Request request = new Request(method, endPoint);
         request.setJsonEntity(query);
-        RestClient client = restClientBuild();
         Response response = null;
         String entityString = "";
 
@@ -101,25 +105,4 @@ public class ElasticApi {
 
         return entityString;
     }
-
-    private static RestClient restClientBuild() {
-        RestClientBuilder builder = null;
-        try {
-            String server = "127.0.0.1";
-            HttpHost host = new HttpHost(server,9200,"http");
-            builder = RestClient.builder(host);
-            builder.setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
-                @Override
-                public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder builder) {
-                    return builder.setConnectTimeout(5000)
-                            .setSocketTimeout(5000)
-                            .setConnectionRequestTimeout(5000);
-                }
-            });
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return builder.build();
-    }
-
 }

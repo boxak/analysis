@@ -18,10 +18,13 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.ComponentScan;
+
 import java.util.List;
 
 @Slf4j
 @DataMongoTest
+@ComponentScan(basePackageClasses = {ElasticApi.class})
 public class AnalyzeServiceTest {
 
     @Autowired
@@ -29,6 +32,9 @@ public class AnalyzeServiceTest {
 
     @Autowired
     ResultRepository resultRepository;
+
+    @Autowired
+    ElasticApi elasticApi;
 
     @Test
     void T1() throws Exception {
@@ -41,7 +47,7 @@ public class AnalyzeServiceTest {
         news.setReadCheck(1);
         Result result = appendNewsAndKeywords(news, keywords);
         resultRepository.save(result);
-        ElasticApi.insertAnalysisResult(result);
+        elasticApi.insertAnalysisResult(result);
         newsRepository.save(news);
     }
 

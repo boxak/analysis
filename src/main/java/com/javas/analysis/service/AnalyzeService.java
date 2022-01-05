@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.javas.analysis.dto.News;
 import com.javas.analysis.dto.Result;
+import com.javas.analysis.es.ElasticApi;
 import com.javas.analysis.mongo_repository.NewsRepository;
 import com.javas.analysis.mongo_repository.ResultRepository;
 import java.util.ArrayList;
