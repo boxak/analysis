@@ -1,5 +1,6 @@
 package com.javas.analysis.controller;
 
+import com.googlecode.jsonrpc4j.JsonRpcMethod;
 import com.javas.analysis.service.AnalyzeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 @Import(MongoDBConfig.class)
 public interface NewsRepository extends MongoRepository<News, String> {
   News findFirstByUri(String uri);
+  List<News> findAllByMediaName(String mediaName);
   List<News> findAllByReadCheck(int readCheck);
+  List<News> findAllByMediaNameAndReadCheck(String mediaName, int readCheck);
 }

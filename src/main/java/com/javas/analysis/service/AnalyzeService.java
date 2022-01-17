@@ -22,12 +22,14 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestClientBuilder.RequestConfigCallback;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import org.elasticsearch.client.Request;
 
 @Service
 @Slf4j
+@ComponentScan(basePackageClasses = {ElasticApi.class})
 public class AnalyzeService {
 
   @Autowired
@@ -35,6 +37,9 @@ public class AnalyzeService {
 
   @Autowired
   ResultRepository resultRepository;
+
+  @Autowired
+  ElasticApi elasticApi;
 
   public String analyze() {
     List<News> newsList = newsRepository.findAllByReadCheck(0);
@@ -52,6 +57,7 @@ public class AnalyzeService {
       news.setReadCheck(1);
       Result result = appendNewsAndKeywords(news, keywords);
       resultList.add(result);
+      elasticApi.insertAnalysisResult(result);
       tempNewsList.add(news);
     }
 
