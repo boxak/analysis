@@ -9,7 +9,7 @@ public class JsonRPCConfig {
 
     @Bean
     public static AutoJsonRpcServiceImplExporter autoJsonRpcServiceImplExporter() {
-        AutoJsonRpcServiceImplExporter exp = new AutoJsonRpcServiceImplExporter();
+        AutoJsonRpcServiceImplExporter exp = new AutoJsonRpcServiceImplExporter(); ///
 
         return exp;
     }
